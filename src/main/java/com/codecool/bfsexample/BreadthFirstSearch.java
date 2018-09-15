@@ -61,19 +61,13 @@ public class BreadthFirstSearch {
     public List<List<UserNode>> shortestPaths(UserNode firstUser, UserNode secondUser) {
         List<List<UserNode>> paths = new ArrayList<>();
 
-        Map<UserNode, List<List<UserNode>>> mapUsersAndPaths = new HashMap<>();
-        Queue<UserNode> userNodeQueue = new LinkedList<>();
-        userNodeQueue.add(firstUser);
-        List<List<UserNode>> firstUserPaths = new ArrayList<>();
-        List<UserNode> firstUserPath = new LinkedList<>();
-        firstUserPath.add(firstUser);
-        firstUserPaths.add(firstUserPath);
-        mapUsersAndPaths.put(firstUser, firstUserPaths);
+        Map<UserNode, List<List<UserNode>>> mapUsersAndPaths = initMapUsersAndPaths(firstUser);
+        Queue<UserNode> userNodeQueue = initQueue(firstUser);
 
         UserNode user = userNodeQueue.poll();
         int distance = distance(firstUser, secondUser);
 
-        while (mapUsersAndPaths.get(user).size() == 0 || mapUsersAndPaths.get(user).get(0).size() <= distance + 1) {
+        while (isSmallDistance(mapUsersAndPaths.get(user), distance)) {
             for (UserNode userNodeFriend : user.getFriends()) {
                 if (!mapUsersAndPaths.containsKey(userNodeFriend)) {
                     mapUsersAndPaths.put(userNodeFriend, new ArrayList<>());
@@ -100,5 +94,27 @@ public class BreadthFirstSearch {
 
         return paths;
     }
+
+    private boolean isSmallDistance(List<List<UserNode>> paths, int distance) {
+        return paths.size() == 0 || paths.get(0).size() <= distance + 1;
+    }
+
+    private Map<UserNode, List<List<UserNode>>> initMapUsersAndPaths(UserNode firstUser) {
+        Map<UserNode, List<List<UserNode>>> mapUsersAndPaths = new HashMap<>();
+        List<List<UserNode>> firstUserPaths = new ArrayList<>();
+        List<UserNode> firstUserPath = new LinkedList<>();
+        firstUserPath.add(firstUser);
+        firstUserPaths.add(firstUserPath);
+        mapUsersAndPaths.put(firstUser, firstUserPaths);
+
+        return mapUsersAndPaths;
+    }
+
+    private Queue<UserNode> initQueue(UserNode firstUser) {
+        Queue<UserNode> userNodeQueue = new LinkedList<>();
+        userNodeQueue.add(firstUser);
+        return userNodeQueue;
+    }
+
 
 }
