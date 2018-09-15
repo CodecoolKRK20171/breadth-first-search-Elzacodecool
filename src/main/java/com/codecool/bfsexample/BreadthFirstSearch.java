@@ -57,4 +57,48 @@ public class BreadthFirstSearch {
         mapUsersDistance.remove(user);
         return mapUsersDistance.keySet();
     }
+
+    public List<List<UserNode>> shortestPaths(UserNode firstUser, UserNode secondUser) {
+        List<List<UserNode>> paths = new ArrayList<>();
+
+        Map<UserNode, List<List<UserNode>>> mapUsersAndPaths = new HashMap<>();
+        Queue<UserNode> userNodeQueue = new LinkedList<>();
+        userNodeQueue.add(firstUser);
+        List<List<UserNode>> firstUserPaths = new ArrayList<>();
+        List<UserNode> firstUserPath = new LinkedList<>();
+        firstUserPath.add(firstUser);
+        firstUserPaths.add(firstUserPath);
+        mapUsersAndPaths.put(firstUser, firstUserPaths);
+
+        UserNode user = userNodeQueue.poll();
+        int distance = distance(firstUser, secondUser);
+
+        while (mapUsersAndPaths.get(user).size() == 0 || mapUsersAndPaths.get(user).get(0).size() <= distance + 1) {
+            for (UserNode userNodeFriend : user.getFriends()) {
+                if (!mapUsersAndPaths.containsKey(userNodeFriend)) {
+                    mapUsersAndPaths.put(userNodeFriend, new ArrayList<>());
+                }
+                for (List<UserNode> path : mapUsersAndPaths.get(user)) {
+                    if (!path.contains(userNodeFriend)) {
+                        List<List<UserNode>> listPaths = mapUsersAndPaths.get(userNodeFriend);
+                        List<UserNode> newPath = new LinkedList<>(path);
+                        newPath.add(userNodeFriend);
+                        listPaths.add(newPath);
+                    }
+
+                }
+                if (!userNodeQueue.contains(userNodeFriend)) {
+                    userNodeQueue.add(userNodeFriend);
+                }
+            }
+
+            if (user.getId() == secondUser.getId()) {
+                paths.addAll(mapUsersAndPaths.get(user));
+            }
+            user = userNodeQueue.poll();
+        }
+
+        return paths;
+    }
+
 }

@@ -60,5 +60,43 @@ class BreadthFirstSearchTest {
         return stringBuilder.toString();
     }
 
+    @Test
+    void testListFriends_oneList() {
+        UserNode firstUser = userDAO.getById(1);
+        UserNode secondUser = userDAO.getById(3);
+        BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
+        String paths = moveListListToString(breadthFirstSearch.shortestPaths(firstUser, secondUser));
+        String result = "[[ 1 2 3]]";
+
+        assertEquals(result, paths);
+    }
+
+    @Test
+    void testListFriends_twoLists() {
+        //WARNING! when first user id = 1 and second user id = 8 OutOfMemoryError :(
+        UserNode firstUser = userDAO.getById(8);
+        UserNode secondUser = userDAO.getById(1);
+        BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
+        String paths = moveListListToString(breadthFirstSearch.shortestPaths(firstUser, secondUser));
+        String result = "[[ 8 90 48 2 1][ 8 7 55 56 1]]";
+
+        assertEquals(result, paths);
+    }
+
+    private String moveListListToString(List<List<UserNode>> paths) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        for (List<UserNode> path : paths) {
+            stringBuilder.append("[");
+            for (UserNode userNode : path) {
+                stringBuilder.append(" ").append(userNode.getId());
+            }
+            stringBuilder.append("]");
+        }
+        stringBuilder.append("]");
+
+        return stringBuilder.toString();
+    }
+
 
 }
